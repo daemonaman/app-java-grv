@@ -14,7 +14,8 @@ pipeline {
 		}
 		stage ("Building docker image"){
 			steps{
-				sh 'docker build -t app-java:$BUILD_TAG .'
+				sh 'sudo docker build -t app-java:$BUILD_TAG .'
+				sh 'sudo docker tag app-java:$BUILD_TAG gouravaas/app-java:$BUILD_TAG '
 			}
 		}
 	}

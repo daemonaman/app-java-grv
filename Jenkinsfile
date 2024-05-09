@@ -26,7 +26,12 @@ pipeline {
 					}
 
 			}
-   		}	
+   		}
+		stage ("Testing the Build"){
+			steps {
+				sh 'sudo docker run -dit --name java-test$BUILD_TAG -p 8090:8080 gouravaas/app-java:$BUILD_TAG'
+			}
+		}
 			
 	}
 

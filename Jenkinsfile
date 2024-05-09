@@ -18,6 +18,16 @@ pipeline {
 				sh 'sudo docker tag app-java:$BUILD_TAG gouravaas/app-java:$BUILD_TAG '
 			}
 		}
+		stage ("Push on Docker-Hub"){
+		        steps{
+				withCredentials([string(credentialsId: 'docker_hub_passwd', variable: 'docker_hub_passwd_var')]) {
+                                	sh 'sudo docker login -u gouravaas -p ${docker_hub_passwd_var}'
+					sh 'sudo docker push gouravaas/app-java:$BUILD_TAG'
+					}
+
+			}
+   		}	
+			
 	}
 
 }

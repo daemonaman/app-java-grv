@@ -32,6 +32,30 @@ pipeline {
 				sh 'sudo docker run -dit --name java-test$BUILD_TAG -p 8090:8080 gouravaas/app-java:$BUILD_TAG'
 			}
 		}
+		stage ("QAT Testing"){
+			steps {
+				retry(5) {
+					script {
+						sh 'sudo curl --silent http://3.110.43.197:8090/java-web-app/ | grep -i -E "(india|sr)"'
+					}
+				}
+			}
+		}
+		stage ("Approval from QAT"){
+			steps {
+				script {
+					Boolean userInput = input(id: 'Proceed1', message: 'Do you want to Promote this build?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you agree with this']])
+                				echo 'userInput: ' + userInput
+				}
+			}
+		}
+		stage ("Prod ENV"){
+			steps{
+				sshagent(credentials:['cloud-slave']) {
+			    	 	sh "ssh -o StrictHostKeyChecking=no ubuntu@65.0.131.149 sudo docker run  -dit  -p  :8080  gouravaas/app-java:$BUILD_TAG"
+				}
+			}
+		}
 			
 	}
 
